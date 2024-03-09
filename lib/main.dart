@@ -1,12 +1,41 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:intgress/core/repository/NoteRepository.dart';
 import 'package:intgress/screens/AnnotationPage.dart';
-import 'package:intgress/screens/InsigthsPage.dart';
+import 'package:intgress/screens/FillNotePage.dart';
+import 'package:intgress/screens/LoginPage.dart';
+import 'package:intgress/screens/NotificationPage.dart';
 import 'package:intgress/screens/MessagePage.dart';
-
+import 'package:intgress/screens/ResumeGeneralPage.dart';
+import 'package:intgress/viewmodel/NoteViewModel.dart';
+import 'package:provider/provider.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart' as sqflite_ffi;
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:flutter/foundation.dart';
 import 'navigation/NavigationBarMain.dart';
+import 'navigation/router.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
-  runApp(const MyApp());
+
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  sqfliteFfiInit();
+
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (context) => NoteRepository()),
+      ChangeNotifierProvider(create: (context) => NoteViewModel(NoteRepository()))
+    ],
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -24,7 +53,8 @@ class MyApp extends StatelessWidget {
             background: Colors.black,
             primary: const Color.fromRGBO(257, 257, 257, 1)),
       ),
-      home: const MyHomePage(),
+      home: const LoginPage(),
+      onGenerateRoute: router.generator,
     );
   }
 }
@@ -47,8 +77,9 @@ class _MyHomePageState extends State<MyHomePage> {
         index: _selectedIndex,
         children: const [
           AnnotationPage(),
-          InsigthsPage(),
           MessagePage(),
+          FillNotePage(),
+          ResumeGeneralPage()
         ],
       ),
     );
