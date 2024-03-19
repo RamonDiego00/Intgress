@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intgress/screens/AnnotationPage.dart';
+import 'package:intgress/screens/MessagePage.dart';
 import 'package:intgress/screens/ResumeGeneralPage.dart';
-import '../screens/AnnotationPage.dart';
-import '../screens/MessagePage.dart';
+import 'package:provider/provider.dart';
 
 class NavigationBarMain extends StatefulWidget {
   @override
@@ -26,7 +27,10 @@ class _NavigationBarMainState extends State<NavigationBarMain> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_selectedIndex],
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _pages,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: const Color.fromRGBO(57, 57, 57, 1),
         showSelectedLabels : false ,
@@ -34,7 +38,6 @@ class _NavigationBarMainState extends State<NavigationBarMain> {
         selectedIconTheme: IconThemeData(color: Colors.white, size: 30),
         selectedItemColor: Colors.white,
         currentIndex: _selectedIndex,
-        // unselectedItemColor: const Color.fromRGBO(257, 257, 257, 0.5),
         unselectedItemColor: Colors.white54,
         items: const [
           BottomNavigationBarItem(

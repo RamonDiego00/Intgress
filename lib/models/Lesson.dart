@@ -22,7 +22,7 @@ class Lesson {
   factory Lesson.fromMap(Map<String, dynamic> map) {
     return Lesson(
       id: map['id'],
-      note_id: map['id'],
+      note_id: map['note_id'],
       statement: map['statement'],
       question: map['question'],
       alternative1: map['alternative1'],

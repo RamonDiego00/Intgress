@@ -9,6 +9,7 @@ import 'package:intgress/screens/FillNotePage.dart';
 import 'package:intgress/screens/LoginPage.dart';
 import 'package:intgress/screens/NotificationPage.dart';
 import 'package:intgress/screens/MessagePage.dart';
+import 'package:intgress/screens/RegisterPage.dart';
 import 'package:intgress/screens/ResumeGeneralPage.dart';
 import 'package:intgress/viewmodel/NoteViewModel.dart';
 import 'package:provider/provider.dart';
@@ -20,8 +21,6 @@ import 'navigation/router.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
-
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -32,9 +31,10 @@ void main() async {
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (context) => NoteRepository()),
-      ChangeNotifierProvider(create: (context) => NoteViewModel(NoteRepository()))
+      ChangeNotifierProvider(
+          create: (context) => NoteViewModel(NoteRepository()))
     ],
-    child: MyApp(),
+    child: const MyApp(),
   ));
 }
 
@@ -47,13 +47,27 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Intgress',
       theme: ThemeData(
+        textTheme:  TextTheme(
+            headlineLarge:  TextStyle(
+              fontSize: 24.0,
+              fontWeight: FontWeight.bold,
+            ),
+            titleLarge:  TextStyle(
+              fontSize: 26.0,
+              fontWeight: FontWeight.bold,
+            ),
+            bodyMedium:  TextStyle(
+              fontSize: 14.0,
+            )),
         useMaterial3: true,
+        primaryColor: Colors.white,
         colorScheme: ColorScheme.fromSeed(
             seedColor: Colors.white,
             background: Colors.black,
-            primary: const Color.fromRGBO(257, 257, 257, 1)),
+            brightness: Brightness.dark,
+            primary: Colors.white),
       ),
-      home: const LoginPage(),
+      home: const MyHomePage(),
       onGenerateRoute: router.generator,
     );
   }
@@ -72,16 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: NavigationBarMain(),
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: const [
-          AnnotationPage(),
-          MessagePage(),
-          FillNotePage(),
-          ResumeGeneralPage()
-        ],
-      ),
+      body:  NavigationBarMain(),
     );
   }
 }

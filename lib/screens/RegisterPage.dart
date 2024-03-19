@@ -1,29 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:intgress/screens/RegisterPage.dart';
+import 'package:intgress/screens/LoginPage.dart';
 import 'package:intgress/utils/MySnackbar.dart';
 
 import '../core/repository/UserRepository.dart';
-import '../models/User.dart';
 import '../services/authenticationService.dart';
 import '../viewmodel/UserViewModel.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key});
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({Key? key});
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _RegisterPageState createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   late UserRepository userRepository;
   late UserViewModel userViewModel;
 
-  TextEditingController _nameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
-  TextEditingController _confirmPasswordController = TextEditingController();
-
   AuthenticationService authenticationService = AuthenticationService();
 
   @override
@@ -72,12 +68,6 @@ class _LoginPageState extends State<LoginPage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          TextField(
-                            controller: _nameController,
-                            decoration: InputDecoration(
-                              hintText: 'Nome',
-                            ),
-                          ),
                           SizedBox(height: 10.0),
                           TextField(
                             controller: _emailController,
@@ -94,13 +84,6 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                           SizedBox(height: 10.0),
-                          TextField(
-                            controller: _confirmPasswordController,
-                            obscureText: true,
-                            decoration: InputDecoration(
-                              hintText: 'Repetir senha',
-                            ),
-                          ),
                         ],
                       ),
                     ),
@@ -109,34 +92,24 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         ElevatedButton(
                           onPressed: () {
-                            String name = _nameController.text;
                             String email = _emailController.text;
                             String password = _passwordController.text;
-                            print('Email: $email');
-                            print('Password: $password');
 
-                            // salvando o User em todos os banco de dados (local e remoto)
-
-                            User user = User(name: name, email: email, password: password);
-
-                            userViewModel.registerUser(context, user);
-
-                            // authenticationService
-                            //     .registerUser(
-                            //         name: name,
-                            //         password: password,
-                            //         email: email)
-                            //     .then((String? error) {
-                            //   if (error != null) {
-                            //     showSnackBar(context: context, text: error);
-                            //   } else {
-                            //     // deu certo
-                            //     showSnackBar(
-                            //         context: context,
-                            //         text: "Cadastro efetuado com sucesso",
-                            //         isError: false);
-                            //   }
-                            // });
+                            authenticationService
+                                .loginUser(
+                                email: email,
+                                password: password,)
+                                .then((String? error) {
+                              if (error != null) {
+                                showSnackBar(context: context, text: error);
+                              } else {
+                                // deu certo
+                                showSnackBar(
+                                    context: context,
+                                    text: "Login efetuado com sucesso",
+                                    isError: false);
+                              }
+                            });
                           },
                           style: ButtonStyle(
                             backgroundColor:
@@ -191,26 +164,24 @@ class _LoginPageState extends State<LoginPage> {
 
                             AuthenticationService().signInWithGoogle(context);
                           },
-                          child:
-                              // Image(image: AssetImage("assets/icon_google.jpg")),
-                              Text('Continuar com google'),
+                          child: Text('Continuar com google'),
                         ),
                         SizedBox(height: 40.0),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text("Já tem uma conta?"),
+                            Text("Não tem uma conta?"),
                             GestureDetector(
                               onTap: () {
                                 // Navegar para a próxima tela ao clicar no texto
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => RegisterPage()),
+                                      builder: (context) => LoginPage()),
                                 );
                               },
                               child: Text(
-                                ' clique aqui!',
+                                ' crie aqui!',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Colors.blue,

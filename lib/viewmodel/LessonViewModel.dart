@@ -10,33 +10,33 @@ import '../core/repository/NoteRepository.dart';
 import '../models/Note.dart';
 import '../services/authenticationService.dart';
 
-class NoteViewModel extends ChangeNotifier {
-  final NoteRepository _noteRepository;
+class LessonViewModel extends ChangeNotifier {
+  final LessonRepository _lessonRepository;
   final authenticationService = AuthenticationService();
 
 
-  NoteViewModel(this._noteRepository) {
+  LessonViewModel(this._lessonRepository) {
     _loadApiKey();
     _loadUserUID();
-    _noteRepository.initialize();
+    _lessonRepository.initialize();
   }
 
-  List<Note> _notes = [];
+  List<Note> _lessons = [];
 
   late String _uidUser ;
 
-  List<Note> get notes => _notes;
+  List<Note> get lessons => _lessons;
   String _apiKey = "";
 
 
   Future<void> deleteAllNotes() async {
-    await _noteRepository.initialize();
-    await _noteRepository.deleteAllNotes();
+    await _lessonRepository.initialize();
+    await _lessonRepository.deleteAllNotes();
   }
 
-  Future<void> deleteNote(Note note) async {
-    await _noteRepository.initialize();
-    await _noteRepository.deleteNote(note);
+  Future<void> deleteNote(Note lesson) async {
+    await _lessonRepository.initialize();
+    await _lessonRepository.deleteNote(lesson);
   }
 
   Future<void> _loadApiKey() async {
@@ -48,9 +48,9 @@ class NoteViewModel extends ChangeNotifier {
   }
 
   Future<List<Note>> getAllNotes() async {
-    await _noteRepository.initialize();
-    _notes = await _noteRepository.getAllNotes();
-    return _notes;
+    await _lessonRepository.initialize();
+    _lessons = await _lessonRepository.getAllNotes();
+    return _lessons;
     notifyListeners();
   }
 
@@ -60,11 +60,11 @@ class NoteViewModel extends ChangeNotifier {
     // Map para armazenar as notas agrupadas por categoria
     Map<String, List<Note>> groupedNotes = {};
 
-    for (var note in allNotes) {
-      if (groupedNotes.containsKey(note.category)) {
-        groupedNotes[note.category]!.add(note);
+    for (var lesson in allNotes) {
+      if (groupedNotes.containsKey(lesson.category)) {
+        groupedNotes[lesson.category]!.add(lesson);
       } else {
-        groupedNotes[note.category] = [note];
+        groupedNotes[lesson.category] = [lesson];
       }
     }
 
@@ -74,9 +74,9 @@ class NoteViewModel extends ChangeNotifier {
     List<Future<Note>> futures = [];
 
     // Processa as notas agrupadas
-    groupedNotes.forEach((category, notes) {
+    groupedNotes.forEach((category, lessons) {
       // Adiciona um futuro para cada nota ao invés da nota diretamente
-      futures.add(summarizeNotesByCategory(notes, category));
+      futures.add(summarizeNotesByCategory(lessons, category));
     });
 
     // Aguarda a conclusão de todos os futuros
@@ -141,12 +141,12 @@ class NoteViewModel extends ChangeNotifier {
   }
 
   // Future<void> initialize() async {
-  //   await _noteRepository.initialize();
+  //   await _lessonRepository.initialize();
   // }
 
-  Future<void> createNewNote(Note note, BuildContext context) async {
-    await _noteRepository.initialize();
-    await _noteRepository.saveNote(note);
+  Future<void> createNewNote(Note lesson, BuildContext context) async {
+    await _lessonRepository.initialize();
+    await _lessonRepository.saveNote(lesson);
     await getAllNotes();
 
     Navigator.push(
