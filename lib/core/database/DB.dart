@@ -33,7 +33,7 @@ class DB {
   String get _notes => '''
     CREATE TABLE notes (
       user_id TEXT,
-      id TEXT,
+      id TEXT PRIMARY KEY,
       title TEXT,
       message TEXT,
       category TEXT
@@ -42,7 +42,7 @@ class DB {
 
   String get _users => '''
     CREATE TABLE users (
-      id TEXT,
+      id TEXT PRIMARY KEY,
       name TEXT,
       email TEXT,
       password TEXT
@@ -52,14 +52,16 @@ class DB {
 // vai virar um JSON
   String get _lessons => '''
     CREATE TABLE lessons (
-      id TEXT,
+      id TEXT PRIMARY KEY,
+      note_id TEXT,
+      category_note TEXT,
+      title_note TEXT,
       statement TEXT,
       question TEXT,
       alternative1 TEXT,
       alternative2 TEXT,
       alternative3 TEXT,
-      correct TEXT,
-      note_id TEXT
+      correct TEXT
     )
   ''';
 }

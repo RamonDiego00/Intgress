@@ -1,6 +1,10 @@
 class Lesson {
-  final int? id;
-  final int? note_id;
+  final String id;
+  final String note_id;
+
+  final String category_note;
+  final String title_note;
+
   final String statement;
   final String question;
   final String alternative1;
@@ -9,8 +13,10 @@ class Lesson {
   final String correct;
 
   Lesson({
-    this.id,
-    this.note_id,
+    required this.id,
+    required this.note_id,
+    required this.category_note,
+    required this.title_note,
     required this.statement,
     required this.question,
     required this.alternative1,
@@ -23,6 +29,8 @@ class Lesson {
     return Lesson(
       id: map['id'],
       note_id: map['note_id'],
+      category_note: map['category_note'],
+      title_note: map['title_note'],
       statement: map['statement'],
       question: map['question'],
       alternative1: map['alternative1'],
@@ -34,8 +42,10 @@ class Lesson {
 
   Map<String, dynamic> toMap() {
     return {
-      if (id != null) 'id': id,
-      if (note_id != null) 'id': note_id,
+      'id': id,
+      'note_id': note_id,
+      'category_note': category_note,
+      'title_note': title_note,
       'statement': statement,
       'question': question,
       'alternative1': alternative1,

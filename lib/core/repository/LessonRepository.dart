@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import '../../models/Lesson.dart';
-import '../../models/Note.dart';
+import '../../models/Lesson.dart';
 import '../database/DB.dart';
 import '../database/database.dart'; // Importe sua classe de banco de dados
 
@@ -26,80 +26,94 @@ class LessonRepository extends ChangeNotifier {
     cloud = FirebaseFirestore.instance;
   }
 
-  Future<void> saveNote(Note note) async {
+  Future<void> saveLesson(Lesson lesson) async {
     try {
-      await db.insert('notes', note.toMap());
+      await db.insert('lessons', lesson.toMap());
       notifyListeners();
 
-      // depois de um tempinho é melhor deletar ela para
-      // limpar os dados do celular e deixar em nuvem
     } catch (e) {
       // Trate qualquer erro de inserção aqui
-      print('Erro ao salvar nota: $e');
+      print('Erro ao salvar lição: $e');
     }
 
     try{
       // passar o id do documento que já existe ele vai atualizar no firestore
-      cloud.collection("Notes").doc(note.id!).set(note.toMap()) ;
+      cloud.collection("Lessons").doc(lesson.id!).set(lesson.toMap()) ;
 
     } catch(e){
-      print("Erro ao salvar em nuvem: $e");
+      print("Erro ao salvar em nuvem a lição: $e");
     }
 
   }
 
-  Future<void> deleteNote(Note note) async {
+  Future<void> deleteLesson(Lesson lesson) async {
     try {
-      await db.delete('notes', where: 'id = ?', whereArgs: [note.id]);
-      await db.delete('note_lesson_relation', where: 'note_id = ?', whereArgs: [note.id]);
+      await db.delete('lessons', where: 'id = ?', whereArgs: [lesson.id]);
+      await db.delete('lesson_lesson_relation', where: 'lesson_id = ?', whereArgs: [lesson.id]);
     } catch (e) {
       print('Erro ao excluir nota: $e');
     }
   }
-  Future<void> deleteAllNotes() async {
+  Future<void> deleteAllLessons() async {
     try {
-      await db.delete('notes');
+      await db.delete('lessons');
       notifyListeners();
     } catch (e) {
       print('Erro ao excluir todas as notas: $e');
     }
   }
 
-  Future<void> updateNote(Note note) async {
+  Future<void> updateLesson(Lesson lesson) async {
     try {
-      await db.update('notes', note.toMap(), where: 'id = ?', whereArgs: [note.id]);
+      await db.update('lessons', lesson.toMap(), where: 'id = ?', whereArgs: [lesson.id]);
     } catch (e) {
       print('Erro ao atualizar nota: $e');
     }
   }
 
 
-  Future<List<Note>> getAllNotes() async {
+  Future<List<Lesson>> getAllLessons() async {
     try {
-      final List<Map<String, dynamic>> noteMaps = await db.query('notes');
-      final List<Note> notes = [];
+      final List<Map<String, dynamic>> lessonMaps = await db.query('lessons');
+      final List<Lesson> lessons = [];
 
-      for (var noteMap in noteMaps) {
-        final String noteId = noteMap['id'];
+      for (var lessonMap in lessonMaps) {
+        // Extraia todos os dados da lição
+        final String lessonId = lessonMap['id'];
+        final String noteId = lessonMap['note_id'];
+        final String titleNote = lessonMap['title_note'];
+        final String categoryNote = lessonMap['category_note'];
+        final String statement = lessonMap['statement'];
+        final String question = lessonMap['question'];
+        final String alternative1 = lessonMap['alternative1'];
+        final String alternative2 = lessonMap['alternative2'];
+        final String alternative3 = lessonMap['alternative3'];
+        final String correct = lessonMap['correct'];
 
-
-        final Note note = Note(
-          idUser: noteMap['idUser'] ,
-          id: noteId,
-          title: noteMap['title'],
-          message: noteMap['message'],
-          category: noteMap['category'],
+        // Crie um novo objeto Lesson
+        final lesson = Lesson(
+          id: lessonId,
+          note_id: noteId,
+          title_note: titleNote,
+          category_note: categoryNote,
+          statement: statement,
+          question: question,
+          alternative1: alternative1,
+          alternative2: alternative2,
+          alternative3: alternative3,
+          correct: correct,
         );
 
-        notes.add(note);
+        lessons.add(lesson);
       }
 
-      return notes;
+      return lessons;
     } catch (e) {
-      print('Erro ao recuperar notas: $e');
+      print('Erro ao recuperar lições: $e');
       return [];
     }
   }
+
 
 
 

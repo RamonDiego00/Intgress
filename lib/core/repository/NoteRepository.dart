@@ -40,7 +40,7 @@ class NoteRepository extends ChangeNotifier {
 
     try{
       // passar o id do documento que já existe ele vai atualizar no firestore
-    cloud.collection("Notes").doc(note.id!).set(note.toMap()) ;
+    cloud.collection("Notes").doc(note.id).set(note.toMap()) ;
 
     } catch(e){
       print("Erro ao salvar em nuvem: $e");
@@ -80,12 +80,11 @@ class NoteRepository extends ChangeNotifier {
       final List<Note> notes = [];
 
       for (var noteMap in noteMaps) {
-        final String noteId = noteMap['id'];
 
 
         final Note note = Note(
-          idUser: noteMap['idUser'] ,
-          id: noteId,
+          user_id: noteMap['user_id'] ,
+          id: noteMap['id'],
           title: noteMap['title'],
           message: noteMap['message'],
           category: noteMap['category'],

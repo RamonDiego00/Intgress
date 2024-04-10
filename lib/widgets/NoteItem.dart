@@ -16,89 +16,72 @@ class NoteItem extends StatefulWidget {
 class _NoteItemState extends State<NoteItem> {
   late NoteRepository noteRepository;
   late NoteViewModel noteViewModel;
-
+  bool _isExpanded = false;
 
   @override
   void initState() {
     super.initState();
-
     noteRepository = NoteRepository();
     noteViewModel = NoteViewModel(noteRepository);
-
   }
-
-  bool _isExpanded = false;
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 4, // Ajusta a elevação do card
-      margin: EdgeInsets.all(8), // Margem ao redor do card
+      color: Color.fromRGBO(57, 57, 57, 1),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+        side: BorderSide(
+          color: Colors.white54, // Altere a cor aqui
+          width: 2,
+        ),
+      ),
+      elevation: 4,
+      // Ajusta a elevação do card
+      margin: EdgeInsets.all(8),
+      // Margem ao redor do card
       child: InkWell(
         onTap: () {
           setState(() {
             _isExpanded = !_isExpanded;
           });
         },
-        child: Container(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          widget.note.title,
-                          style: const TextStyle(
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          '90%',
-                          style: TextStyle(color: Colors.green),
-                        ),
-                        SizedBox(width: 8),
-                        GestureDetector(
-                          onTap: () {
-                           noteRepository.deleteNote(widget.note);
-                          },
-                          child: Icon(
-                            Icons.delete,
-                            color: Colors.red,
-                          ),
-                        )
-                      ],
+              Row(
+                children: [
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      widget.note.title,
+                      style: Theme.of(context).textTheme.titleLarge
                     ),
-                    const SizedBox(height: 8.0),
-                    if (_isExpanded)
-                      Text(
-                        widget.note.message,
-                        style: const TextStyle(fontSize: 16.0),
+                  ),
+                  if (_isExpanded)
+                    GestureDetector(
+                      onTap: () {
+                        noteRepository.deleteNote(widget.note);
+                      },
+                      child: Icon(
+                        Icons.delete,
+                        size: 20,
                       ),
-                    Row(children: [
-                      GestureDetector(
-                        onTap: () {
-
-                        },
-                        child: Icon(Icons.share)
-                        ,
-                      )
-                    ,
-                      GestureDetector(
-                        onTap: () {
-
-                        },
-                        child: Icon(Icons.send),
-                      ),
-                    ])
-                  ],
-                ),
+                    ),
+                  SizedBox(width: 10),
+                ],
               ),
+              if (_isExpanded)
+                Wrap(
+                  children: [
+                    Text(
+                      widget.note.message,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    )
+                  ],
+                )
             ],
           ),
         ),

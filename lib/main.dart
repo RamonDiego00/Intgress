@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:intgress/core/repository/NoteRepository.dart';
@@ -34,59 +36,87 @@ void main() async {
       ChangeNotifierProvider(
           create: (context) => NoteViewModel(NoteRepository()))
     ],
-    child: const MyApp(),
+    child: MyApp(),
   ));
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Intgress',
-      theme: ThemeData(
-        textTheme:  TextTheme(
-            headlineLarge:  TextStyle(
-              fontSize: 24.0,
-              fontWeight: FontWeight.bold,
+    SystemChrome.setSystemUIOverlayStyle(
+        const SystemUiOverlayStyle(
+          systemNavigationBarDividerColor: Colors.black,
+          systemNavigationBarColor: Color.fromRGBO(57, 57, 57, 1),
+        ));
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          // User is logged in, show NavigationBarMain
+          return MaterialApp(
+            theme: ThemeData(
+              bottomAppBarTheme:BottomAppBarTheme(color: Colors.black54),
+              textTheme: const TextTheme(
+                headlineLarge: TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.bold,
+                ),
+                titleLarge: TextStyle(
+                  fontSize: 26.0,
+                  fontWeight: FontWeight.bold,
+                ),
+                bodyMedium: TextStyle(
+                  fontSize: 14.0,
+
+
+                ),
+              ),
+              useMaterial3: true,
+              primaryColor: Colors.white,
+              colorScheme: ColorScheme.fromSeed(
+                  seedColor: Colors.white,
+                  background: Colors.black,
+                  brightness: Brightness.dark,
+                  primary: Colors.white),
             ),
-            titleLarge:  TextStyle(
-              fontSize: 26.0,
-              fontWeight: FontWeight.bold,
+            home: NavigationBarMain(),
+            onGenerateRoute: router.generator,
+          );
+        } else {
+          // User is not logged in, show LoginPage
+          return MaterialApp(
+            theme: ThemeData(
+                bottomAppBarTheme:BottomAppBarTheme(color: Colors.black54),
+              textTheme: const TextTheme(
+                headlineLarge: TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.bold,
+                ),
+                titleLarge: TextStyle(
+                  fontSize: 26.0,
+                  fontWeight: FontWeight.bold,
+                ),
+                bodyMedium: TextStyle(
+                  fontSize: 14.0,
+
+
+                ),
+              ),
+              useMaterial3: true,
+              primaryColor: Colors.white,
+              colorScheme: ColorScheme.fromSeed(
+                  seedColor: Colors.white,
+                  background: Colors.black,
+                  brightness: Brightness.dark,
+                  primary: Colors.white),
             ),
-            bodyMedium:  TextStyle(
-              fontSize: 14.0,
-            )),
-        useMaterial3: true,
-        primaryColor: Colors.white,
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.white,
-            background: Colors.black,
-            brightness: Brightness.dark,
-            primary: Colors.white),
-      ),
-      home: const MyHomePage(),
-      onGenerateRoute: router.generator,
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _selectedIndex = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body:  NavigationBarMain(),
+            home: LoginPage(),
+            onGenerateRoute: router.generator,
+          );
+        }
+      },
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intgress/core/repository/NoteRepository.dart';
 import 'package:intgress/utils/AudioMethods.dart';
+import 'package:intgress/viewmodel/LessonViewModel.dart';
 import 'package:intgress/viewmodel/NoteViewModel.dart';
 import 'package:record/record.dart';
 
@@ -10,10 +11,12 @@ import '../models/Note.dart';
 
 class BottomBarNote extends StatefulWidget {
   final NoteViewModel viewModel;
+  final LessonViewModel lessonViewModel;
   final Note? note;
 
   BottomBarNote({
     required this.viewModel,
+    required this.lessonViewModel,
     required this.note,
   });
 
@@ -47,32 +50,37 @@ class _BottomBarNoteState extends State<BottomBarNote> {
             icon: Icon(Icons.camera_alt_outlined),
             onPressed: () {},
           ),
-          ...isRecording ? [
-            IconButton(
-              icon: Icon(Icons.stop_circle_outlined),
-              onPressed: () {
-                setState(() {
-                  isRecording = false;
-                });
-                AudioMethods().stopRecording(true, audioRecord, audioPlayer);
-              },
-            )
-          ] : [
-            IconButton(
-              icon: Icon(Icons.mic),
-              onPressed: () {
-                setState(() {
-                  isRecording = true;
-                });
-                AudioMethods().startRecording(true, audioRecord, audioPlayer);
-              },
-            )
-          ],
+          ...isRecording
+              ? [
+                  IconButton(
+                    icon: Icon(Icons.stop_circle_outlined),
+                    onPressed: () {
+                      setState(() {
+                        isRecording = false;
+                      });
+                      AudioMethods()
+                          .stopRecording(true, audioRecord, audioPlayer);
+                    },
+                  )
+                ]
+              : [
+                  IconButton(
+                    icon: Icon(Icons.mic),
+                    onPressed: () {
+                      setState(() {
+                        isRecording = true;
+                      });
+                      AudioMethods()
+                          .startRecording(true, audioRecord, audioPlayer);
+                    },
+                  )
+                ],
           IconButton(
             icon: Icon(Icons.check_circle_outline),
             onPressed: () {
               if (widget.note != null) {
                 widget.viewModel.createNewNote(widget.note!, context);
+                widget.lessonViewModel.createNewLesson(context, widget.note!);
               }
             },
           ),

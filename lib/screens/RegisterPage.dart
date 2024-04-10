@@ -162,6 +162,8 @@ class _RegisterPageState extends State<RegisterPage> {
                           onPressed: () {
                             //Login com google
 
+                            // userViewModel.registerUser(context, user);
+
                             AuthenticationService().signInWithGoogle(context);
                           },
                           child: Text('Continuar com google'),

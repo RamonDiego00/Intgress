@@ -1,10 +1,10 @@
 import 'package:audioplayers/audioplayers.dart';
+import 'package:intgress/core/repository/LessonRepository.dart';
+import 'package:intgress/viewmodel/LessonViewModel.dart';
 import 'package:record/record.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
-
-import '../core/database/Database.dart';
 import '../core/repository/NoteRepository.dart';
 import '../models/Note.dart';
 import '../navigation/BottomBarActions.dart';
@@ -34,6 +34,8 @@ class _FillNotePageState extends State<FillNotePage> {
 
   late NoteRepository noteRepository;
   late NoteViewModel noteViewModel;
+  late LessonRepository lessonRepository;
+  late LessonViewModel lessonViewModel;
   late AuthenticationService authenticationService;
 
   final TextEditingController _titleController = TextEditingController();
@@ -50,7 +52,10 @@ class _FillNotePageState extends State<FillNotePage> {
 
     // setando as variaveis
     noteRepository = NoteRepository();
+    lessonRepository = LessonRepository();
     noteViewModel = NoteViewModel(noteRepository);
+
+    lessonViewModel = LessonViewModel(lessonRepository);
     authenticationService = AuthenticationService();
 
     // Adiciona os ouvintes para atualizar a nota sempre que os campos de texto forem alterados
@@ -86,7 +91,7 @@ class _FillNotePageState extends State<FillNotePage> {
     setState(() {
       _currentNote = Note(
           id: id,
-          idUser: authenticationService.getCurrentUIDUser(),
+          user_id: authenticationService.getCurrentUuser_id(),
           title: _titleController.text,
           message: _messageController.text,
           category: "Bioquímica");
@@ -128,6 +133,7 @@ class _FillNotePageState extends State<FillNotePage> {
       bottomNavigationBar: SingleChildScrollView(
           reverse: true,
           child: BottomBarNote(
+            lessonViewModel: lessonViewModel,
             viewModel: noteViewModel,
             note: _currentNote,
           )),

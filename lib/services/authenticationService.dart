@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:intgress/main.dart';
 import 'package:intgress/models/User.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intgress/screens/AnnotationPage.dart';
@@ -16,8 +17,9 @@ class AuthenticationService {
   UserViewModel? _userViewModel;
 
   late String _userUid;
+  late GoogleSignInAccount? gUser = null;
 
-  String getCurrentUIDUser() {
+  String getCurrentUuser_id() {
     final user = _firebaseAuth.currentUser;
     if (user != null) {
       _userUid = user.uid;
@@ -31,12 +33,22 @@ class AuthenticationService {
     _userViewModel = UserViewModel(_userRepository);
   }
 
+
+  String? getProfileImageUrl() {
+    if (_firebaseAuth.currentUser?.photoURL != null) {
+      return _firebaseAuth.currentUser!.photoURL!;
+    } else {
+      return null;
+    }
+  }
+
   Future<UserCredential?> signInWithGoogle(BuildContext context) async {
     try {
       final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
       if (gUser == null) {
         return null;
       }
+      this.gUser = gUser;
 
       final GoogleSignInAuthentication gAuth = await gUser.authentication;
       final credential = GoogleAuthProvider.credential(
@@ -45,15 +57,25 @@ class AuthenticationService {
       );
 
       final UserCredential? userCredential =
-          await FirebaseAuth.instance.signInWithCredential(credential);
+      await FirebaseAuth.instance.signInWithCredential(credential);
+
+
+      // salvando o user no banco de dados local e remoto
+
+
+      User user = User(id: gUser.id,
+          name: gUser.displayName!,
+          email: gUser.email,
+          password: "");
+
+      _userViewModel?.registerUser(context, user);
 
       if (userCredential != null) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => AnnotationPage()),
+          MaterialPageRoute(builder: (context) => MyApp()),
         );
       }
-
       return userCredential;
     } catch (error) {
       print(error);
@@ -68,7 +90,6 @@ class AuthenticationService {
     required String email,
   }) async {
     try {
-
       _initializeUserViewModel();
 
       UserCredential user = await _firebaseAuth.createUserWithEmailAndPassword(
@@ -79,14 +100,18 @@ class AuthenticationService {
 
       // salvando remotamente no firestore como uma collection (ideal é mover para um outro arquivo essa lógica)
 
+      User userCloud = User(
+          id: user.user!.uid, name: name, email: email, password: password);
 
-      final User newUser = User(name: name, email: email, password: password);
-      _userViewModel!.registerUser(context, newUser);
+      _userViewModel?.registerUser(context, userCloud);
 
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.user?.uid)
-          .set(newUser.toMap());
+      // final User newUser = User(name: name, email: email, password: password, id: user.user!.uid);
+      // // _userViewModel!.registerUser(context, newUser);
+      //
+      // await FirebaseFirestore.instance
+      //     .collection('users')
+      //     .doc(user.user?.uid)
+      //     .set(newUser.toMap());
 
       return null;
     } on FirebaseAuthException catch (e) {

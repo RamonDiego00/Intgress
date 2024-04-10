@@ -2,12 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:intgress/main.dart';
 import 'package:intgress/screens/AnnotationPage.dart';
 import 'package:intgress/screens/ResumeGeneralPage.dart';
 import 'package:uuid/uuid.dart';
 
 import '../core/repository/NoteRepository.dart';
 import '../models/Note.dart';
+import '../navigation/NavigationBarMain.dart';
 import '../services/authenticationService.dart';
 
 class NoteViewModel extends ChangeNotifier {
@@ -23,7 +25,7 @@ class NoteViewModel extends ChangeNotifier {
 
   List<Note> _notes = [];
 
-  late String _uidUser ;
+  late String user_id ;
 
   List<Note> get notes => _notes;
   String _apiKey = "";
@@ -44,7 +46,7 @@ class NoteViewModel extends ChangeNotifier {
     _apiKey = dotenv.env['API_KEY']!;
   }
  void  _loadUserUID()  {
-   _uidUser = authenticationService.getCurrentUIDUser();
+   user_id = authenticationService.getCurrentUuser_id();
   }
 
   Future<List<Note>> getAllNotes() async {
@@ -130,7 +132,7 @@ class NoteViewModel extends ChangeNotifier {
 
     final geminiNote = Note(
       id: id,
-      idUser: _uidUser,
+      user_id: user_id,
       category: category,
       title: responseTitle.text!,
       message: responseMessage.text!,);
@@ -152,7 +154,7 @@ class NoteViewModel extends ChangeNotifier {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => AnnotationPage(),
+        builder: (context) =>  NavigationBarMain(),
       ),
     );
   }

@@ -1,15 +1,13 @@
-
-
 class Note {
-  final String? id;
-  final String idUser;
+  final String id;
+  final String user_id;
   final String category;
   final String title;
   final String message;
 
   Note({
-    this.id,
-    required this.idUser,
+    required this.id,
+    required this.user_id,
     required this.category,
     required this.title,
     required this.message,
@@ -18,7 +16,7 @@ class Note {
   factory Note.fromMap(Map<String, dynamic> map) {
     return Note(
         id: map['id'],
-        idUser: map['idUser'],
+        user_id: map['user_id'],
         category: map['category'],
         title: map['title'],
         message: map['message']);
@@ -26,7 +24,8 @@ class Note {
 
   Map<String, dynamic> toMap() {
     return {
-      if (id != null) 'id': id,
+      'id': id,
+      'user_id': user_id,
       'category': category,
       'title': title,
       'message': message,

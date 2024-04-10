@@ -57,8 +57,25 @@ class _ResumeGeneralPageState extends State<ResumeGeneralPage> {
                   width: 320,child: TextField(
                   decoration: InputDecoration(
                     hintText: 'Pesquise seu resumo',
-                    prefixIcon: Icon(Icons.dehaze_rounded),
-                    suffixIcon: Icon(Icons.circle),
+                    prefixIcon: IconButton(
+                      icon: Icon(Icons.dehaze_rounded),
+                      onPressed: () {
+                        Scaffold.of(context).openDrawer();
+                      },
+                    ),
+                    suffixIcon: Container(
+                      width: 10,
+                      height: 10,
+                      margin: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: NetworkImage(noteViewModel.authenticationService.getProfileImageUrl()!)
+
+                        ),
+                      ),
+                    ),
                     contentPadding: const EdgeInsets.symmetric(
                         horizontal: 12.0, vertical: 12.0),
                     border: OutlineInputBorder(
@@ -87,14 +104,18 @@ class _ResumeGeneralPageState extends State<ResumeGeneralPage> {
                     return Column(children: [SizedBox(height: 30.0,),Text('Nenhuma nota encontrada')],);
                   } else {
                     // Mapeie cada nota para um widget NoteItem
-                    return ListView.builder(
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (context, index) {
-                        final note = snapshot.data![index];
-                        return NoteItem(
-                            note: note
-                        );
-                      },
+                    return Container(
+                      constraints: BoxConstraints(maxWidth: 340), // Define a largura máxima da lista
+                      child: ListView.builder(
+                        padding: EdgeInsets.symmetric(vertical: 28.0),
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index) {
+                          final note = snapshot.data![index];
+                          return NoteItem(
+                              note: note
+                          );
+                        },
+                      ),
                     );
                   }
                 },

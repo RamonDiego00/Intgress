@@ -39,7 +39,6 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        actions: [],
       ),
       body: Center(
         child: Column(
@@ -117,26 +116,24 @@ class _LoginPageState extends State<LoginPage> {
 
                             // salvando o User em todos os banco de dados (local e remoto)
 
-                            User user = User(name: name, email: email, password: password);
 
-                            userViewModel.registerUser(context, user);
 
-                            // authenticationService
-                            //     .registerUser(
-                            //         name: name,
-                            //         password: password,
-                            //         email: email)
-                            //     .then((String? error) {
-                            //   if (error != null) {
-                            //     showSnackBar(context: context, text: error);
-                            //   } else {
-                            //     // deu certo
-                            //     showSnackBar(
-                            //         context: context,
-                            //         text: "Cadastro efetuado com sucesso",
-                            //         isError: false);
-                            //   }
-                            // });
+                            authenticationService
+                                .registerUser(context: context,
+                                    name: name,
+                                    password: password,
+                                    email: email)
+                                .then((String? error) {
+                              if (error != null) {
+                                showSnackBar(context: context, text: error);
+                              } else {
+                                // deu certo
+                                showSnackBar(
+                                    context: context,
+                                    text: "Cadastro efetuado com sucesso",
+                                    isError: false);
+                              }
+                            });
                           },
                           style: ButtonStyle(
                             backgroundColor:

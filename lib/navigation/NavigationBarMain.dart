@@ -50,10 +50,10 @@ class _NavigationBarMainState extends State<NavigationBarMain> {
             icon: Icon(
                 Icons.pie_chart),
           ),
-          BottomNavigationBarItem(
-            label: "",
-            icon: Icon(Icons.message_outlined,),
-          ),
+          // BottomNavigationBarItem(
+          //   label: "",
+          //   icon: Icon(Icons.message_outlined,),
+          // ),
         ],
         onTap: _onItemTapped,
       ),

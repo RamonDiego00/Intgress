@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intgress/services/authenticationService.dart';
@@ -32,27 +33,34 @@ class UserRepository extends ChangeNotifier {
       await db.insert('users', user.toMap());
       notifyListeners();
     } catch (e) {
-      print('Erro ao salvar nota: $e');
+      print('Erro ao salvar usuario: $e');
     }
     // Salvando remotamente
     try {
-      AuthenticationService()
-          .registerUser(
-              context: context,
-              name: user.name,
-              password: user.password,
-              email: user.email)
-          .then((String? error) {
-        if (error != null) {
-          showSnackBar(context: context, text: error);
-        } else {
-          // deu certo
-          showSnackBar(
-              context: context,
-              text: "Cadastro efetuado com sucesso",
-              isError: false);
-        }
-      });
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.id)
+          .set(user.toMap());
+
+
+      // AuthenticationService()
+      //     .registerUser(
+      //         context: context,
+      //         name: user.name,
+      //         password: user.password,
+      //         email: user.email)
+      //     .then((String? error) {
+      //   if (error != null) {
+      //     showSnackBar(context: context, text: error);
+      //   } else {
+      //     // deu certo
+      //     showSnackBar(
+      //         context: context,
+      //         text: "Cadastro efetuado com sucesso",
+      //         isError: false);
+      //   }
+      // });
     } catch (e) {
       print('Erro ao salvar nota na nuvem: $e');
     }
